@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manjari&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Chettan+2&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Malayalam&display=swap');
+
+/* Scroll container */
+.scrollContainer {
+  box-sizing: border-box;
+  overflow-y: scroll;
+  height: 100%;
+  padding-top: var(--ui-kit-space-200);
+  padding-right: var(--ui-kit-space-200);
+  padding-bottom: var(--ui-kit-space-200);
+
+  /* for firefox */
+  scrollbar-width: thin;
+  scrollbar-color: var(--ui-kit-color-content-placeholder-fg) transparent;
+}
+
+.scrollContainer::-webkit-scrollbar {
+  position: absolute;
+  width: var(--ui-kit-base-unit);
+  height: 0;
+}
+
+.scrollContainer::-webkit-scrollbar-track {
+  background: transparent;
+  width: var(--ui-kit-base-unit);
+  margin-top: var(--ui-kit-space-100);
+  margin-bottom: var(--ui-kit-space-100);
+}
+
+.scrollContainer::-webkit-scrollbar-thumb {
+  border-radius: var(--ui-kit-radius-element-standard);
+  background: var(--ui-kit-color-content-placeholder-fg);
+  visibility: hidden;
+}
+
+.scrollContainer:hover::-webkit-scrollbar-thumb,
+.scrollContainer:focus::-webkit-scrollbar-thumb,
+.scrollContainer:focus-within::-webkit-scrollbar-thumb {
+  visibility: visible;
+}
+
+/* App-specific layout */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-kit-space-200);
+  padding: var(--ui-kit-space-200);
+}
+
+.controlGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-kit-space-100);
+}
+
+.previewBox {
+  border: 1px solid var(--ui-kit-color-divider-fg);
+  padding: var(--ui-kit-space-200);
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ui-kit-color-background-primary);
+}
+
+.fontSelect {
+  width: 100%;
+}
+
+.colorPicker {
+  width: 40px;
+  height: 30px;
+  padding: 0;
+  border: none;
+}
