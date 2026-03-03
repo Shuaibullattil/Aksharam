@@ -6,14 +6,17 @@ import * as styles from "styles/components.css";
 
 import { fonts } from "./fonts";
 import {
+  defaultEffectsState,
+  EffectsState,
+  TextEffectType,
+} from "./effects";
+import {
   TextInput,
   FontSelector,
   SizeSlider,
   ParameterSlider,
   ColorPicker,
   ColorCircle,
-  ShadowControl,
-  OutlineControl,
   PreviewBox,
   AddButton,
 } from "./components";
@@ -31,18 +34,16 @@ export const App: React.FC = () => {
   const [lineHeight, setLineHeight] = useState<number>(120); // percent
   const [letterSpacing, setLetterSpacing] = useState<number>(0); // px
   const [color, setColor] = useState<string>("#000000");
-  const [shadowEnabled, setShadowEnabled] = useState<boolean>(false);
-  const [shadowColor, setShadowColor] = useState<string>("#000000");
-  const [shadowOffset, setShadowOffset] = useState<number>(50);
-  const [shadowDirection, setShadowDirection] = useState<number>(315);
-  const [shadowBlur, setShadowBlur] = useState<number>(0);
-  const [shadowOpacity, setShadowOpacity] = useState<number>(40);
-  const [outlineEnabled, setOutlineEnabled] = useState<boolean>(false);
-  const [outlineColor, setOutlineColor] = useState<string>("#000000");
-  const [outlineWidth, setOutlineWidth] = useState<number>(1);
+  const [selectedEffect, setSelectedEffect] = useState<TextEffectType>("none");
+  const [effects, setEffects] = useState<EffectsState>(defaultEffectsState);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [fontsLoaded, setFontsLoaded] = useState<boolean>(false);
   const [textColorPickerOpen, setTextColorPickerOpen] = useState<boolean>(false);
+  const [shadowColorPickerOpen, setShadowColorPickerOpen] = useState<boolean>(false);
+  const [spliceColorPickerOpen, setSpliceColorPickerOpen] = useState<boolean>(false);
+  const [outlineColorPickerOpen, setOutlineColorPickerOpen] = useState<boolean>(false);
+  const [backgroundColorPickerOpen, setBackgroundColorPickerOpen] =
+    useState<boolean>(false);
 
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -50,6 +51,21 @@ export const App: React.FC = () => {
   const addElement = [addElementAtPoint, addElementAtCursor].find((fn) =>
     isSupported(fn),
   );
+
+  const updateEffects = (updater: (prev: EffectsState) => EffectsState) => {
+    setEffects((prev) => updater(prev));
+  };
+
+  const resetEffects = () => {
+    setEffects(defaultEffectsState);
+  };
+
+  const handleSelectEffect = (effect: TextEffectType) => {
+    setSelectedEffect(effect);
+    if (effect === "none") {
+      resetEffects();
+    }
+  };
 
   // Load fonts
   useEffect(() => {
@@ -130,31 +146,336 @@ export const App: React.FC = () => {
           />
         </div>
 
-        {/* Shadow Control Component */}
-        <ShadowControl
-          enabled={shadowEnabled}
-          onToggle={setShadowEnabled}
-          color={shadowColor}
-          onColorChange={setShadowColor}
-          offset={shadowOffset}
-          onOffsetChange={setShadowOffset}
-          direction={shadowDirection}
-          onDirectionChange={setShadowDirection}
-          blur={shadowBlur}
-          onBlurChange={setShadowBlur}
-          opacity={shadowOpacity}
-          onOpacityChange={setShadowOpacity}
-        />
+        {/* Effects Section */}
+        <section className={styles.effectsSection}>
+          <div className={styles.effectsTitleRow}>
+            <label className={styles.inputLabel}>Effects</label>
+          </div>
 
-        {/* Outline Control Component */}
-        <OutlineControl
-          enabled={outlineEnabled}
-          onToggle={setOutlineEnabled}
-          color={outlineColor}
-          onColorChange={setOutlineColor}
-          width={outlineWidth}
-          onWidthChange={setOutlineWidth}
-        />
+          <div className={styles.effectsGrid}>
+            {(
+              [
+                "none",
+                "shadow",
+                "lift",
+                "hollow",
+                "splice",
+                "outline",
+                "neon",
+                "background",
+              ] as TextEffectType[]
+            ).map((effect) => {
+              const isSelected = selectedEffect === effect;
+
+              const previewStyle: React.CSSProperties = (() => {
+                switch (effect) {
+                  case "shadow":
+                    return {
+                      textShadow: "4px 4px 8px rgba(15,23,42,0.35)",
+                    };
+                  case "lift":
+                    return {
+                      textShadow: "0 10px 20px rgba(15,23,42,0.35)",
+                    };
+                  case "hollow":
+                    return {
+                      color: "transparent",
+                      WebkitTextStroke: "2px #111827",
+                    };
+                  case "splice":
+                    return {
+                      WebkitTextStroke: "2px #111827",
+                      textShadow: "4px 4px 0 #8B3DFF",
+                    };
+                  case "outline":
+                    return {
+                      WebkitTextStroke: "2px #8B3DFF",
+                    };
+                  case "neon":
+                    return {
+                      color: "#FFFFFF",
+                      textShadow:
+                        "0 0 6px rgba(139,61,255,0.9), 0 0 14px rgba(139,61,255,0.7)",
+                    };
+                  case "background":
+                    return {
+                      padding: "2px 6px",
+                      borderRadius: "999px",
+                      backgroundColor: "rgba(251,191,36,0.8)",
+                    };
+                  case "none":
+                  default:
+                    return {};
+                }
+              })();
+
+              const name = (() => {
+                switch (effect) {
+                  case "none":
+                    return "None";
+                  case "shadow":
+                    return "Shadow";
+                  case "lift":
+                    return "Lift";
+                  case "hollow":
+                    return "Hollow";
+                  case "splice":
+                    return "Splice";
+                  case "outline":
+                    return "Outline";
+                  case "neon":
+                    return "Neon";
+                  case "background":
+                    return "Background";
+                  default:
+                    return effect;
+                }
+              })();
+
+              return (
+                <div key={effect} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                  <button
+                    type="button"
+                    className={`${styles.effectCard} ${
+                      isSelected ? styles.effectCardSelected : ""
+                    }`}
+                    onClick={() => handleSelectEffect(effect)}
+                  >
+                    <span className={styles.effectGlyph} style={previewStyle}>
+                      അ
+                    </span>
+                  </button>
+                  <span className={styles.effectName}>{name}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          {selectedEffect === "shadow" && (
+            <>
+              <ParameterSlider
+                label="Offset"
+                value={effects.shadow.offset}
+                onChange={(value) =>
+                  updateEffects((prev) => ({
+                    ...prev,
+                    shadow: { ...prev.shadow, offset: value },
+                  }))
+                }
+                min={0}
+                max={50}
+              />
+              <ParameterSlider
+                label="Direction"
+                value={effects.shadow.direction}
+                onChange={(value) =>
+                  updateEffects((prev) => ({
+                    ...prev,
+                    shadow: { ...prev.shadow, direction: value },
+                  }))
+                }
+                min={0}
+                max={360}
+              />
+              <ParameterSlider
+                label="Blur"
+                value={effects.shadow.blur}
+                onChange={(value) =>
+                  updateEffects((prev) => ({
+                    ...prev,
+                    shadow: { ...prev.shadow, blur: value },
+                  }))
+                }
+                min={0}
+                max={50}
+              />
+              <ParameterSlider
+                label="Transparency"
+                value={effects.shadow.transparency}
+                onChange={(value) =>
+                  updateEffects((prev) => ({
+                    ...prev,
+                    shadow: { ...prev.shadow, transparency: value },
+                  }))
+                }
+                min={0}
+                max={100}
+              />
+              <div className={styles.paramRow}>
+                <label className={styles.inputLabel}>Shadow color</label>
+                <ColorCircle
+                  color={effects.shadow.color}
+                  onClick={() => setShadowColorPickerOpen(true)}
+                />
+              </div>
+            </>
+          )}
+
+          {selectedEffect === "lift" && (
+            <ParameterSlider
+              label="Intensity"
+              value={effects.lift.intensity}
+              onChange={(value) =>
+                updateEffects((prev) => ({
+                  ...prev,
+                  lift: { ...prev.lift, intensity: value },
+                }))
+              }
+              min={0}
+              max={50}
+            />
+          )}
+
+          {selectedEffect === "hollow" && (
+            <ParameterSlider
+              label="Thickness"
+              value={effects.hollow.thickness}
+              onChange={(value) =>
+                updateEffects((prev) => ({
+                  ...prev,
+                  hollow: { ...prev.hollow, thickness: value },
+                }))
+              }
+              min={0}
+              max={20}
+            />
+          )}
+
+          {selectedEffect === "splice" && (
+            <>
+              <ParameterSlider
+                label="Thickness"
+                value={effects.splice.thickness}
+                onChange={(value) =>
+                  updateEffects((prev) => ({
+                    ...prev,
+                    splice: { ...prev.splice, thickness: value },
+                  }))
+                }
+                min={0}
+                max={20}
+              />
+              <ParameterSlider
+                label="Offset"
+                value={effects.splice.offset}
+                onChange={(value) =>
+                  updateEffects((prev) => ({
+                    ...prev,
+                    splice: { ...prev.splice, offset: value },
+                  }))
+                }
+                min={0}
+                max={50}
+              />
+              <ParameterSlider
+                label="Direction"
+                value={effects.splice.direction}
+                onChange={(value) =>
+                  updateEffects((prev) => ({
+                    ...prev,
+                    splice: { ...prev.splice, direction: value },
+                  }))
+                }
+                min={0}
+                max={360}
+              />
+              <div className={styles.paramRow}>
+                <label className={styles.inputLabel}>Splice color</label>
+                <ColorCircle
+                  color={effects.splice.color}
+                  onClick={() => setSpliceColorPickerOpen(true)}
+                />
+              </div>
+            </>
+          )}
+
+          {selectedEffect === "outline" && (
+            <>
+              <ParameterSlider
+                label="Thickness"
+                value={effects.outline.thickness}
+                onChange={(value) =>
+                  updateEffects((prev) => ({
+                    ...prev,
+                    outline: { ...prev.outline, thickness: value },
+                  }))
+                }
+                min={0}
+                max={20}
+              />
+              <div className={styles.paramRow}>
+                <label className={styles.inputLabel}>Outline color</label>
+                <ColorCircle
+                  color={effects.outline.color}
+                  onClick={() => setOutlineColorPickerOpen(true)}
+                />
+              </div>
+            </>
+          )}
+
+          {selectedEffect === "neon" && (
+            <ParameterSlider
+              label="Intensity"
+              value={effects.neon.intensity}
+              onChange={(value) =>
+                updateEffects((prev) => ({
+                  ...prev,
+                  neon: { ...prev.neon, intensity: value },
+                }))
+              }
+              min={0}
+              max={50}
+            />
+          )}
+
+          {selectedEffect === "background" && (
+            <>
+              <ParameterSlider
+                label="Roundness"
+                value={effects.background.roundness}
+                onChange={(value) =>
+                  updateEffects((prev) => ({
+                    ...prev,
+                    background: { ...prev.background, roundness: value },
+                  }))
+                }
+                min={0}
+                max={50}
+              />
+              <ParameterSlider
+                label="Spread"
+                value={effects.background.spread}
+                onChange={(value) =>
+                  updateEffects((prev) => ({
+                    ...prev,
+                    background: { ...prev.background, spread: value },
+                  }))
+                }
+                min={0}
+                max={50}
+              />
+              <ParameterSlider
+                label="Transparency"
+                value={effects.background.transparency}
+                onChange={(value) =>
+                  updateEffects((prev) => ({
+                    ...prev,
+                    background: { ...prev.background, transparency: value },
+                  }))
+                }
+                min={0}
+                max={100}
+              />
+              <div className={styles.paramRow}>
+                <label className={styles.inputLabel}>Background color</label>
+                <ColorCircle
+                  color={effects.background.color}
+                  onClick={() => setBackgroundColorPickerOpen(true)}
+                />
+              </div>
+            </>
+          )}
+        </section>
 
         {/* Preview Box Component */}
         <PreviewBox
@@ -166,15 +487,8 @@ export const App: React.FC = () => {
           lineHeight={lineHeight}
           letterSpacing={letterSpacing}
           color={color}
-          shadowEnabled={shadowEnabled}
-          shadowColor={shadowColor}
-          shadowOffset={shadowOffset}
-          shadowDirection={shadowDirection}
-          shadowBlur={shadowBlur}
-          shadowOpacity={shadowOpacity}
-          outlineEnabled={outlineEnabled}
-          outlineColor={outlineColor}
-          outlineWidth={outlineWidth}
+          selectedEffect={selectedEffect}
+          effects={effects}
           fontsLoaded={fontsLoaded}
         />
 
@@ -193,6 +507,59 @@ export const App: React.FC = () => {
         onChange={setColor}
         isOpen={textColorPickerOpen}
         onClose={() => setTextColorPickerOpen(false)}
+      />
+
+      {/* Effect Color Pickers */}
+      <ColorPicker
+        label="Shadow Color"
+        value={effects.shadow.color}
+        onChange={(value) =>
+          updateEffects((prev) => ({
+            ...prev,
+            shadow: { ...prev.shadow, color: value },
+          }))
+        }
+        isOpen={shadowColorPickerOpen}
+        onClose={() => setShadowColorPickerOpen(false)}
+      />
+
+      <ColorPicker
+        label="Splice Color"
+        value={effects.splice.color}
+        onChange={(value) =>
+          updateEffects((prev) => ({
+            ...prev,
+            splice: { ...prev.splice, color: value },
+          }))
+        }
+        isOpen={spliceColorPickerOpen}
+        onClose={() => setSpliceColorPickerOpen(false)}
+      />
+
+      <ColorPicker
+        label="Outline Color"
+        value={effects.outline.color}
+        onChange={(value) =>
+          updateEffects((prev) => ({
+            ...prev,
+            outline: { ...prev.outline, color: value },
+          }))
+        }
+        isOpen={outlineColorPickerOpen}
+        onClose={() => setOutlineColorPickerOpen(false)}
+      />
+
+      <ColorPicker
+        label="Background Color"
+        value={effects.background.color}
+        onChange={(value) =>
+          updateEffects((prev) => ({
+            ...prev,
+            background: { ...prev.background, color: value },
+          }))
+        }
+        isOpen={backgroundColorPickerOpen}
+        onClose={() => setBackgroundColorPickerOpen(false)}
       />
     </div>
   );

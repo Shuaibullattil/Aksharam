@@ -53,6 +53,60 @@
   gap: var(--ui-kit-space-100);
 }
 
+.effectsSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-kit-space-150, 12px);
+}
+
+.effectsTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.effectsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap:2px;
+}
+
+.effectCard {
+  position: relative;
+  border-radius: 10px;
+  padding: 12px 12px;
+  border: 1px solid #E5E7EB;
+  background: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease,
+    background 0.15s ease;
+}
+
+.effectCard:hover {
+  border-color: #C7D2FE;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
+}
+
+.effectCardSelected {
+  border-color: #8B3DFF;
+  box-shadow: 0 0 0 1px rgba(139, 61, 255, 0.4), 0 4px 10px rgba(15, 23, 42, 0.16);
+}
+
+.effectGlyph {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.effectName {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--ui-kit-color-content-primary-fg);
+  text-align: center;
+}
+
 .controlHeader {
   display: flex;
   align-items: center;
