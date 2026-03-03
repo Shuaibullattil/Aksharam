@@ -13,9 +13,9 @@ export const FontSelector: React.FC<FontSelectorProps> = ({
 }) => {
   return (
     <div className={styles.controlGroup}>
-      <label>Font</label>
+      <label className={styles.inputLabel}>Font</label>
       <select
-        className={styles.fontSelect}
+        className={styles.selectInput}
         value={value}
         onChange={(e) => onChange(e.target.value)}
       >
@@ -32,3 +32,4 @@ export const FontSelector: React.FC<FontSelectorProps> = ({
     </div>
   );
 };
+

@@ -1,4 +1,5 @@
 import React from "react";
+import * as styles from "styles/components.css";
 
 interface AddButtonProps {
   onClick: () => void;
@@ -12,8 +13,13 @@ export const AddButton: React.FC<AddButtonProps> = ({
   isLoading,
 }) => {
   return (
-    <button onClick={onClick} disabled={disabled}>
+    <button
+      className={styles.primaryButton}
+      onClick={onClick}
+      disabled={disabled || isLoading}
+    >
       {isLoading ? "Generating…" : "Add to Design"}
     </button>
   );
 };
+

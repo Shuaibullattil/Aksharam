@@ -9,10 +9,10 @@ interface TextInputProps {
 export const TextInput: React.FC<TextInputProps> = ({ value, onChange }) => {
   return (
     <div className={styles.controlGroup}>
-      <label>Malayalam text</label>
+      <label className={styles.inputLabel}>Malayalam text</label>
       <textarea
-        rows={3}
-        style={{ width: "100%" }}
+        className={styles.textAreaInput}
+        rows={4}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Enter Malayalam text here..."
@@ -20,3 +20,4 @@ export const TextInput: React.FC<TextInputProps> = ({ value, onChange }) => {
     </div>
   );
 };
+

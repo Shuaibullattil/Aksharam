@@ -1,5 +1,6 @@
 import React from "react";
 import * as styles from "styles/components.css";
+import { ParameterSlider } from "./ParameterSlider";
 
 interface SizeSliderProps {
   value: number;
@@ -15,15 +16,14 @@ export const SizeSlider: React.FC<SizeSliderProps> = ({
   max = 200,
 }) => {
   return (
-    <div className={styles.controlGroup}>
-      <label>Size: {value}px</label>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-      />
-    </div>
+    <ParameterSlider
+      label="Size"
+      value={value}
+      onChange={onChange}
+      min={min}
+      max={max}
+      step={1}
+    />
   );
 };
+

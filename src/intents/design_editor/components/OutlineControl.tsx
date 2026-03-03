@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import * as styles from "styles/components.css";
+import { ColorCircle } from "./ColorCircle";
+import { ColorPicker } from "./ColorPicker";
+import { ParameterSlider } from "./ParameterSlider";
 
 interface OutlineControlProps {
   enabled: boolean;
@@ -18,34 +21,48 @@ export const OutlineControl: React.FC<OutlineControlProps> = ({
   width,
   onWidthChange,
 }) => {
+  const [colorPickerOpen, setColorPickerOpen] = useState(false);
+
   return (
-    <div className={styles.controlGroup}>
-      <label>
-        <input
-          type="checkbox"
-          checked={enabled}
-          onChange={(e) => onToggle(e.target.checked)}
-        />{" "}
-        Outline
-      </label>
-      {enabled && (
-        <>
+    <>
+      <div className={styles.controlGroup}>
+        <label className={styles.checkboxLabel}>
           <input
-            type="color"
-            className={styles.colorPicker}
-            value={color}
-            onChange={(e) => onColorChange(e.target.value)}
+            type="checkbox"
+            className={styles.checkboxInput}
+            checked={enabled}
+            onChange={(e) => onToggle(e.target.checked)}
           />
-          <label>Thickness: {width}px</label>
-          <input
-            type="range"
-            min={0}
-            max={10}
-            value={width}
-            onChange={(e) => onWidthChange(Number(e.target.value))}
-          />
-        </>
-      )}
-    </div>
+          <span>Outline</span>
+        </label>
+        {enabled && (
+          <>
+            <ParameterSlider
+              label="Thickness"
+              value={width}
+              onChange={onWidthChange}
+              min={0}
+              max={10}
+              trailing={
+                <ColorCircle
+                  color={color}
+                  onClick={() => setColorPickerOpen(true)}
+                />
+              }
+            />
+          </>
+        )}
+      </div>
+
+      <ColorPicker
+        label="Outline Color"
+        value={color}
+        onChange={onColorChange}
+        isOpen={colorPickerOpen}
+        onClose={() => setColorPickerOpen(false)}
+      />
+    </>
   );
 };
+
+

@@ -53,6 +53,19 @@
   gap: var(--ui-kit-space-100);
 }
 
+.controlHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.controlTrailing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .previewBox {
   border: 1px solid var(--ui-kit-color-divider-fg);
   padding: var(--ui-kit-space-200);
@@ -67,9 +80,679 @@
   width: 100%;
 }
 
+.colorPickerContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-kit-space-100);
+}
+
+.colorPickerLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ui-kit-color-content-primary-fg);
+}
+
+.colorPreview {
+  width: 100%;
+  height: 150px;
+  border-radius: 8px;
+  border: 1px solid var(--ui-kit-color-divider-fg);
+  background: linear-gradient(180deg, 
+    rgba(255,255,255,1) 0%,
+    rgba(255,255,255,0.5) 50%,
+    rgba(0,0,0,0.5) 100%);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+  transition: background-color 0.1s ease;
+}
+
+.colorSliderWrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.colorSlider {
+  flex: 1;
+  height: 24px;
+  border-radius: 12px;
+  border: none;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Slider thumb styling */
+.colorSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid rgba(0,0,0,0.2);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.colorSlider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid rgba(0,0,0,0.2);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.colorSlider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 24px;
+  background: inherit;
+  border-radius: 12px;
+}
+
+.colorSlider::-moz-range-track {
+  background: inherit;
+  border-radius: 12px;
+}
+
+.colorHexInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--ui-kit-color-divider-fg);
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  text-align: center;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+  background: var(--ui-kit-color-background-primary);
+  color: var(--ui-kit-color-content-primary-fg);
+}
+
+.colorHexInput:focus {
+  border-color: var(--ui-kit-color-interaction-primary-fg);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(89, 109, 255, 0.1);
+}
+
 .colorPicker {
   width: 40px;
   height: 30px;
   padding: 0;
   border: none;
 }
+
+/* Text Input Styling - Canva Style */
+.inputLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ui-kit-color-content-primary-fg);
+  margin-bottom: 4px;
+}
+
+.textAreaInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--ui-kit-color-divider-fg);
+  border-radius: 6px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ui-kit-color-content-primary-fg);
+  background: var(--ui-kit-color-background-primary);
+  resize: vertical;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.textAreaInput:hover {
+  border-color: var(--ui-kit-color-divider-secondary-fg);
+}
+
+.textAreaInput:focus {
+  border-color: var(--ui-kit-color-interaction-primary-fg);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(89, 109, 255, 0.1);
+}
+
+.textAreaInput::placeholder {
+  color: var(--ui-kit-color-content-placeholder-fg);
+}
+
+/* Primary Button - Canva Style */
+.primaryButton {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #8B3DFF;
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  width: 100%;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: #7A2FFF;
+  box-shadow: 0 2px 8px rgba(139, 61, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+.primaryButton:active:not(:disabled) {
+  background: #6A22FF;
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(139, 61, 255, 0.25);
+}
+
+.primaryButton:disabled {
+  background: var(--ui-kit-color-content-secondary-fg);
+  color: var(--ui-kit-color-content-placeholder-fg);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.primaryButton:focus:not(:disabled) {
+  outline: none;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px rgba(139, 61, 255, 0.55);
+}
+
+/* Select Input - Canva Style */
+.selectInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--ui-kit-color-divider-fg);
+  border-radius: 6px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 13px;
+  color: var(--ui-kit-color-content-primary-fg);
+  background: var(--ui-kit-color-background-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+  padding-right: 32px;
+}
+
+.selectInput:hover {
+  border-color: var(--ui-kit-color-divider-secondary-fg);
+}
+
+.selectInput:focus {
+  border-color: var(--ui-kit-color-interaction-primary-fg);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(89, 109, 255, 0.1);
+}
+
+/* Slider Input - Canva Style */
+.sliderInput {
+  flex: 1;
+  min-width: 0;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right, 
+    #8B3DFF 0%,
+    #8B3DFF var(--value, 0%),
+    #D1D5DB var(--value, 0%),
+    #D1D5DB 100%);
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sliderInput::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #8B3DFF;
+  border: 2px solid white;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+}
+
+.sliderInput::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(139, 61, 255, 0.35);
+}
+
+.sliderInput::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #8B3DFF;
+  border: 2px solid white;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+}
+
+.sliderInput::-moz-range-track {
+  background: transparent;
+  border: none;
+}
+
+/* Checkbox Input - Canva Style */
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ui-kit-color-content-primary-fg);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkboxInput {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  margin: 0;
+  flex-shrink: 0;
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 6px;
+  background: #8B3DFF;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.18);
+  border: none;
+  position: relative;
+}
+
+.checkboxInput:hover {
+  background: #7A2FFF;
+  box-shadow: 0 3px 6px rgba(15, 23, 42, 0.22);
+}
+
+.checkboxInput:checked {
+  background: #5B1ED4;
+}
+
+.checkboxInput:checked::before {
+  content: "";
+  position: absolute;
+  inset: 3px 4px 5px 4px;
+  border-radius: 4px;
+  border-bottom-left-radius: 5px;
+  border: 2px solid transparent;
+  border-left-color: white;
+  border-bottom-color: white;
+  transform: rotate(-45deg);
+}
+
+.checkboxInput:active {
+  transform: scale(0.96);
+  box-shadow: 0 0 0 6px rgba(148, 163, 184, 0.35);
+}
+
+.checkboxInput:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px rgba(139, 61, 255, 0.65);
+}
+
+/* Backwards compatibility for old fontSelect class */
+.fontSelect {
+  width: 100%;
+}
+
+/* Color Circle Button */
+.colorCircleContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.colorCircleLabel {
+  font-size: 12px;
+  color: var(--ui-kit-color-content-placeholder-fg);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.colorCircle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+/* parameter slider row */
+.paramRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  height: 36px;
+  border: 1px solid #D1D5DB;
+  border-radius: 12px;
+  background: #ffffff;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.stepperButton {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  color: var(--ui-kit-color-content-primary-fg);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.stepperButton:first-child {
+  border-right: 1px solid #E5E7EB;
+}
+
+.stepperButton:last-child {
+  border-left: 1px solid #E5E7EB;
+}
+
+.stepperButton:hover:not(:disabled) {
+  background: var(--ui-kit-color-background-secondary);
+}
+
+.stepperButton:active:not(:disabled) {
+  background: var(--ui-kit-color-background-tertiary);
+}
+
+.stepperButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.stepperInput {
+  width: 56px;
+  height: 36px;
+  border: none;
+  outline: none;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  background: transparent;
+  color: var(--ui-kit-color-content-primary-fg);
+  appearance: textfield;
+}
+
+.stepperInput::-webkit-outer-spin-button,
+.stepperInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.stepperInput:focus {
+  box-shadow: inset 0 0 0 2px rgba(139, 61, 255, 0.25);
+}
+
+.colorCircle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.colorCircle:active {
+  transform: scale(0.95);
+}
+
+.colorCircle:focus {
+  outline: 2px solid var(--ui-kit-color-interaction-primary-fg);
+  outline-offset: 2px;
+}
+
+/* Color Picker Modal */
+.colorPickerOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 999;
+}
+
+.colorPickerModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  width: 90%;
+  max-width: 380px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.colorPickerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid var(--ui-kit-color-divider-fg);
+  background: #ffffff;
+}
+
+.colorPickerHeader h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ui-kit-color-content-primary-fg);
+}
+
+.closeButton {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--ui-kit-color-content-secondary-fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+  background: var(--ui-kit-color-background-secondary);
+  color: var(--ui-kit-color-content-primary-fg);
+}
+
+.closeButton:active {
+  background: var(--ui-kit-color-background-tertiary);
+}
+
+.colorPickerContent {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #ffffff;
+}
+
+/* Inline Color Picker (for modal use) */
+.colorPickerContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-kit-space-100);
+}
+
+.colorPickerLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ui-kit-color-content-primary-fg);
+}
+
+.colorPreview {
+  width: 100%;
+  height: 120px;
+  border-radius: 8px;
+  border: 1px solid var(--ui-kit-color-divider-fg);
+  background: linear-gradient(180deg, 
+    rgba(255,255,255,1) 0%,
+    rgba(255,255,255,0.5) 50%,
+    rgba(0,0,0,0.5) 100%);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+  transition: background-color 0.1s ease;
+}
+
+.colorSliderWrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.colorSlider {
+  flex: 1;
+  height: 24px;
+  border-radius: 12px;
+  border: none;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Slider thumb styling */
+.colorSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid rgba(0,0,0,0.2);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.colorSlider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid rgba(0,0,0,0.2);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.colorSlider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 24px;
+  background: inherit;
+  border-radius: 12px;
+}
+
+.colorSlider::-moz-range-track {
+  background: inherit;
+  border-radius: 12px;
+}
+
+.colorHexInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--ui-kit-color-divider-fg);
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  text-align: center;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+  background: var(--ui-kit-color-background-primary);
+  color: var(--ui-kit-color-content-primary-fg);
+}
+
+.colorHexInput:focus {
+  border-color: var(--ui-kit-color-interaction-primary-fg);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(89, 109, 255, 0.1);
+}
+
+.colorHexInput::placeholder {
+  color: var(--ui-kit-color-content-placeholder-fg);
+}
+
+/* additional custom picker rules */
+.colorBox {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  border-radius: 12px;
+  cursor: crosshair;
+}
+
+.colorPointer {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 1px black;
+}
+
+.colorSlider {
+  width: 100%;
+  height: 12px;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.colorHexInput {
+  margin-top: 16px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+

@@ -1,7 +1,9 @@
 export { TextInput } from "./TextInput";
 export { FontSelector } from "./FontSelector";
 export { SizeSlider } from "./SizeSlider";
+export { ParameterSlider } from "./ParameterSlider";
 export { ColorPicker } from "./ColorPicker";
+export { ColorCircle } from "./ColorCircle";
 export { ShadowControl } from "./ShadowControl";
 export { OutlineControl } from "./OutlineControl";
 export { PreviewBox } from "./PreviewBox";
