@@ -4,12 +4,24 @@ import { addElementAtCursor, addElementAtPoint } from "@canva/design";
 import { toPng } from "html-to-image";
 import * as styles from "styles/components.css";
 
-import { fonts, FontOption } from "./fonts";
+import { fonts } from "./fonts";
+import {
+  TextInput,
+  FontSelector,
+  SizeSlider,
+  ColorPicker,
+  ShadowControl,
+  OutlineControl,
+  PreviewBox,
+  AddButton,
+} from "./components";
 
 /**
- * MVP Malayalam typography tool for Canva.
+ * Akshara Studio - Malayalam Typography Tool for Canva
+ * Component-based architecture for easy UI customization
  */
 export const App: React.FC = () => {
+  // State management
   const [text, setText] = useState("");
   const [font, setFont] = useState<string>(fonts[0]?.name || "");
   const [size, setSize] = useState<number>(48);
@@ -29,16 +41,16 @@ export const App: React.FC = () => {
     isSupported(fn),
   );
 
+  // Load fonts
   useEffect(() => {
-    // wait for fonts to load (CSS import already brings them in)
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(() => setFontsLoaded(true));
     } else {
-      // fallback - assume ready
       setFontsLoaded(true);
     }
   }, []);
 
+  // Export to Canva
   const handleAdd = async () => {
     if (!previewRef.current || !addElement) {
       return;
@@ -46,7 +58,11 @@ export const App: React.FC = () => {
     setIsGenerating(true);
     try {
       const dataUrl = await toPng(previewRef.current, { pixelRatio: 3 });
-      await addElement({ type: "image", dataUrl, altText: { text: text || "Malayalam text", decorative: false } });
+      await addElement({
+        type: "image",
+        dataUrl: dataUrl,
+        altText: { text: text || "Malayalam text", decorative: false },
+      });
     } catch (err) {
       console.error(err);
       alert("Failed to generate image");
@@ -55,129 +71,64 @@ export const App: React.FC = () => {
     }
   };
 
-  const previewStyle: React.CSSProperties = {
-    fontFamily: font,
-    fontSize: `${size}px`,
-    color,
-    textShadow: shadowEnabled
-      ? `2px 2px 2px ${shadowColor}`
-      : undefined,
-    WebkitTextStroke: outlineEnabled
-      ? `${outlineWidth}px ${outlineColor}`
-      : undefined,
-  };
-
   return (
     <div className={styles.scrollContainer}>
       <div className={styles.container}>
-        <div className={styles.controlGroup}>
-          <label>Malayalam text</label>
-          <textarea
-            rows={3}
-            style={{ width: "100%" }}
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-          />
-        </div>
+        {/* Text Input Component */}
+        <TextInput value={text} onChange={setText} />
 
-        <div className={styles.controlGroup}>
-          <label>Font</label>
-          <select
-            className={styles.fontSelect}
-            value={font}
-            onChange={(e) => setFont(e.target.value)}
-          >
-            {fonts.map((f) => (
-              <option
-                key={f.name}
-                value={f.name}
-                style={{ fontFamily: f.name }}
-              >
-                {`നമസ്കാരം (${f.name})`}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* Font Selector Component */}
+        <FontSelector value={font} onChange={setFont} />
 
-        <div className={styles.controlGroup}>
-          <label>Size: {size}px</label>
-          <input
-            type="range"
-            min={10}
-            max={200}
-            value={size}
-            onChange={(e) => setSize(Number(e.target.value))}
-          />
-        </div>
+        {/* Size Slider Component */}
+        <SizeSlider value={size} onChange={setSize} />
 
-        <div className={styles.controlGroup}>
-          <label>Text color</label>
-          <input
-            type="color"
-            className="colorPicker"
-            value={color}
-            onChange={(e) => setColor(e.target.value)}
-          />
-        </div>
+        {/* Text Color Component */}
+        <ColorPicker
+          label="Text color"
+          value={color}
+          onChange={setColor}
+        />
 
-        <div className={styles.controlGroup}>
-          <label>
-            <input
-              type="checkbox"
-              checked={shadowEnabled}
-              onChange={(e) => setShadowEnabled(e.target.checked)}
-            />{' '}
-            Shadow
-          </label>
-          {shadowEnabled && (
-            <input
-              type="color"
-              value={shadowColor}
-              onChange={(e) => setShadowColor(e.target.value)}
-            />
-          )}
-        </div>
+        {/* Shadow Control Component */}
+        <ShadowControl
+          enabled={shadowEnabled}
+          onToggle={setShadowEnabled}
+          color={shadowColor}
+          onColorChange={setShadowColor}
+        />
 
-        <div className={styles.controlGroup}>
-          <label>
-            <input
-              type="checkbox"
-              checked={outlineEnabled}
-              onChange={(e) => setOutlineEnabled(e.target.checked)}
-            />{' '}
-            Outline
-          </label>
-          {outlineEnabled && (
-            <>
-              <input
-                type="color"
-                value={outlineColor}
-                onChange={(e) => setOutlineColor(e.target.value)}
-              />
-              <label>Thickness: {outlineWidth}px</label>
-              <input
-                type="range"
-                min={0}
-                max={10}
-                value={outlineWidth}
-                onChange={(e) => setOutlineWidth(Number(e.target.value))}
-              />
-            </>
-          )}
-        </div>
+        {/* Outline Control Component */}
+        <OutlineControl
+          enabled={outlineEnabled}
+          onToggle={setOutlineEnabled}
+          color={outlineColor}
+          onColorChange={setOutlineColor}
+          width={outlineWidth}
+          onWidthChange={setOutlineWidth}
+        />
 
-        <div className={styles.previewBox} ref={previewRef}>
-          <span style={previewStyle}>
-            {fontsLoaded ? text || 'നമസ്കാരം' : 'Loading fonts...'}
-          </span>
-        </div>
+        {/* Preview Box Component */}
+        <PreviewBox
+          ref={previewRef}
+          text={text}
+          font={font}
+          size={size}
+          color={color}
+          shadowEnabled={shadowEnabled}
+          shadowColor={shadowColor}
+          outlineEnabled={outlineEnabled}
+          outlineColor={outlineColor}
+          outlineWidth={outlineWidth}
+          fontsLoaded={fontsLoaded}
+        />
 
-        <button
+        {/* Add Button Component */}
+        <AddButton
           onClick={handleAdd}
           disabled={!text || isGenerating || !addElement}
-        >
-          {isGenerating ? 'Generating…' : 'Add to Design'}
-        </button>
+          isLoading={isGenerating}
+        />
       </div>
     </div>
   );
