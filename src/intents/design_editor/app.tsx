@@ -180,28 +180,29 @@ export const App: React.FC = () => {
                   case "hollow":
                     return {
                       color: "transparent",
-                      WebkitTextStroke: "2px #111827",
+                      WebkitTextStroke: "1px #111827",
                     };
                   case "splice":
                     return {
-                      WebkitTextStroke: "2px #111827",
-                      textShadow: "4px 4px 0 #8B3DFF",
+                      WebkitTextStroke: "1px #111827",
+                      textShadow: "4px 4px 0 #d7d7d7",
                     };
                   case "outline":
                     return {
-                      WebkitTextStroke: "2px #8B3DFF",
+                      WebkitTextStroke: "1px #030303",
+                      color: "#a0a0a0",
                     };
                   case "neon":
                     return {
-                      color: "#FFFFFF",
+                      color: "rgba(197, 158, 255, 0.9)",
                       textShadow:
                         "0 0 6px rgba(139,61,255,0.9), 0 0 14px rgba(139,61,255,0.7)",
                     };
                   case "background":
                     return {
                       padding: "2px 6px",
-                      borderRadius: "999px",
-                      backgroundColor: "rgba(251,191,36,0.8)",
+                      borderRadius: "6px",
+                      backgroundColor: "#d7d7d7",
                     };
                   case "none":
                   default:

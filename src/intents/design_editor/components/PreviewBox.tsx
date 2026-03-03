@@ -1,13 +1,6 @@
 import React from "react";
 import * as styles from "styles/components.css";
-import {
-  BackgroundEffectSettings,
-  EffectsState,
-  NeonEffectSettings,
-  ShadowEffectSettings,
-  SpliceEffectSettings,
-  TextEffectType,
-} from "../effects";
+import { EffectsState, TextEffectType } from "../effects";
 
 interface PreviewBoxProps {
   ref: React.RefObject<HTMLDivElement>;
@@ -23,7 +16,13 @@ interface PreviewBoxProps {
   fontsLoaded: boolean;
 }
 
-export const PreviewBox = React.forwardRef<HTMLDivElement, Omit<PreviewBoxProps, 'ref'>>(
+const SVG_WIDTH = 400;
+const SVG_HEIGHT = 160;
+
+export const PreviewBox = React.forwardRef<
+  HTMLDivElement,
+  Omit<PreviewBoxProps, "ref">
+>(
   (
     {
       text,
@@ -37,190 +36,308 @@ export const PreviewBox = React.forwardRef<HTMLDivElement, Omit<PreviewBoxProps,
       effects,
       fontsLoaded,
     },
-    ref
+    ref,
   ) => {
-    const hexToRgba = (hex: string, alpha: number) => {
-      const cleaned = hex.replace("#", "").trim();
-      const full =
-        cleaned.length === 3
-          ? cleaned
-              .split("")
-              .map((c) => c + c)
-              .join("")
-          : cleaned;
-      if (!/^[0-9a-fA-F]{6}$/.test(full)) {
-        return `rgba(0,0,0,${alpha})`;
-      }
-      const r = parseInt(full.slice(0, 2), 16);
-      const g = parseInt(full.slice(2, 4), 16);
-      const b = parseInt(full.slice(4, 6), 16);
-      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-    };
+    const content = fontsLoaded ? text || "നമസ്കാരം" : "Loading fonts...";
+    const lines = content.split(/\r?\n/);
 
-    const applyShadow = (settings: ShadowEffectSettings): string => {
-      const { offset, direction, blur, transparency, color: shadowColor } = settings;
-      const distance = offset;
-      const radians = (direction * Math.PI) / 180;
-      const x = distance * Math.cos(radians);
-      const y = distance * Math.sin(radians);
-      const alpha = Math.min(1, Math.max(0, transparency / 100));
-      const rgba = hexToRgba(shadowColor, alpha);
-      return `${x.toFixed(2)}px ${y.toFixed(2)}px ${blur}px ${rgba}`;
-    };
+    const lineHeightPx = size * (lineHeight / 100);
+    const totalHeight = lineHeightPx * Math.max(lines.length, 1);
+    const startY = SVG_HEIGHT / 2 - totalHeight / 2 + lineHeightPx * 0.8;
 
-    const applyNeon = (settings: NeonEffectSettings, baseColor: string): string => {
-      const intensity = settings.intensity;
-      if (intensity <= 0) return "";
-      const alphaBase = Math.min(1, 0.6 + intensity / 100);
-      const small = `${0}px ${0}px ${intensity * 0.8}px ${hexToRgba(baseColor, alphaBase)}`;
-      const medium = `${0}px ${0}px ${intensity * 1.6}px ${hexToRgba(baseColor, alphaBase * 0.7)}`;
-      const large = `${0}px ${0}px ${intensity * 2.4}px ${hexToRgba(baseColor, alphaBase * 0.4)}`;
-      return [small, medium, large].join(", ");
-    };
-
-    const applyBackground = (settings: BackgroundEffectSettings, baseColor: string) => {
-      const { roundness, spread, transparency, color: bgColor } = settings;
-      const alpha = Math.min(1, Math.max(0, (100 - transparency) / 100));
-      const backgroundColor = hexToRgba(bgColor || baseColor, alpha);
-      return {
-        paddingInline: `${spread}px`,
-        paddingBlock: `${spread / 2}px`,
-        borderRadius: `${roundness}px`,
-        backgroundColor,
-      } as React.CSSProperties;
-    };
-
-    const applySpliceShadow = (settings: SpliceEffectSettings): string => {
-      const { offset, direction, color: spliceColor } = settings;
-      const distance = offset;
-      const radians = (direction * Math.PI) / 180;
-      const x = distance * Math.cos(radians);
-      const y = distance * Math.sin(radians);
-      const rgba = hexToRgba(spliceColor, 1);
-      return `${x.toFixed(2)}px ${y.toFixed(2)}px 0 ${rgba}`;
-    };
-
-    const baseTextStyle: React.CSSProperties = {
+    const baseTextProps = {
       fontFamily: font,
-      fontSize: `${size}px`,
+      fontSize: size,
       fontWeight,
-      lineHeight: (lineHeight / 100).toString(),
-      letterSpacing: `${letterSpacing}px`,
-      color,
-      whiteSpace: "pre-wrap",
+      letterSpacing,
+      textAnchor: "middle" as const,
+      dominantBaseline: "alphabetic" as const,
     };
 
-    const wrapperStyle: React.CSSProperties = {
-      display: "inline-block",
+    const polarToCartesian = (distance: number, angleDeg: number) => {
+      const radians = (angleDeg * Math.PI) / 180;
+      return {
+        x: distance * Math.cos(radians),
+        y: distance * Math.sin(radians),
+      };
     };
 
-    const styleForEffect = (): {
-      wrapper: React.CSSProperties;
-      text: React.CSSProperties;
-    } => {
+    const generateEffectSvg = () => {
+      const centerX = SVG_WIDTH / 2;
+
+      const renderLines = (
+        opts: {
+          fill?: string;
+          stroke?: string;
+          strokeWidth?: number;
+          filterId?: string;
+        } = {},
+      ) => (
+        <text
+          x={centerX}
+          y={startY}
+          fill={opts.fill ?? color}
+          stroke={opts.stroke}
+          strokeWidth={opts.strokeWidth}
+          filter={opts.filterId ? `url(#${opts.filterId})` : undefined}
+          {...baseTextProps}
+        >
+          {lines.map((line, index) => (
+            <tspan
+              key={index}
+              x={centerX}
+              dy={index === 0 ? 0 : lineHeightPx}
+            >
+              {line}
+            </tspan>
+          ))}
+        </text>
+      );
+
+      const defs: React.ReactNode[] = [];
+
+      let contentNode: React.ReactNode = renderLines();
+      let backgroundNode: React.ReactNode = null;
+
       switch (selectedEffect) {
-        case "shadow": {
-          const textShadow = applyShadow(effects.shadow);
-          return {
-            wrapper: wrapperStyle,
-            text: {
-              ...baseTextStyle,
-              textShadow,
-            },
-          };
-        }
-        case "lift": {
-          const intensity = effects.lift.intensity;
-          const y = intensity;
-          const blur = intensity * 2;
-          const shadow = `0 ${y}px ${blur}px rgba(15, 23, 42, 0.35)`;
-          return {
-            wrapper: wrapperStyle,
-            text: {
-              ...baseTextStyle,
-              textShadow: shadow,
-            },
-          };
-        }
-        case "hollow": {
-          const thickness = effects.hollow.thickness;
-          return {
-            wrapper: wrapperStyle,
-            text: {
-              ...baseTextStyle,
-              color: "transparent",
-              WebkitTextStroke: `${thickness}px ${color}`,
-            },
-          };
-        }
-        case "splice": {
-          const { thickness } = effects.splice;
-          const spliceShadow = applySpliceShadow(effects.splice);
-          return {
-            wrapper: wrapperStyle,
-            text: {
-              ...baseTextStyle,
-              WebkitTextStroke: `${thickness}px ${color}`,
-              textShadow: spliceShadow,
-            },
-          };
-        }
         case "outline": {
-          const { thickness, color: outlineColor } = effects.outline;
-          return {
-            wrapper: wrapperStyle,
-            text: {
-              ...baseTextStyle,
-              color,
-              WebkitTextStroke: `${thickness}px ${outlineColor}`,
-            },
-          };
+          const { thickness, color: strokeColor } = effects.outline;
+          contentNode = renderLines({
+            fill: color,
+            stroke: strokeColor,
+            strokeWidth: thickness,
+          });
+          break;
         }
-        case "neon": {
-          const neonShadow = applyNeon(effects.neon, color);
-          return {
-            wrapper: wrapperStyle,
-            text: {
-              ...baseTextStyle,
-              color: "#FFFFFF",
-              textShadow: neonShadow,
-            },
-          };
-        }
-        case "background": {
-          const bg = applyBackground(effects.background, color);
-          const mergedWrapper = {
-            ...wrapperStyle,
-            ...bg,
-          };
-          return {
-            wrapper: mergedWrapper,
-            text: {
-              ...baseTextStyle,
-            },
-          };
-        }
-        case "none":
-        default:
-          return {
-            wrapper: wrapperStyle,
-            text: baseTextStyle,
-          };
-      }
-    };
 
-    const { wrapper, text: previewStyle } = styleForEffect();
+        case "hollow": {
+          const { thickness } = effects.hollow;
+          contentNode = renderLines({
+            fill: "transparent",
+            stroke: color,
+            strokeWidth: thickness,
+          });
+          break;
+        }
+
+        case "shadow": {
+          const { offset, direction, blur, transparency, color: shadowColor } =
+            effects.shadow;
+          const { x, y } = polarToCartesian(offset, direction);
+          const opacity = Math.max(0, Math.min(1, (100 - transparency) / 100));
+          const filterId = "shadowEffect";
+
+          defs.push(
+            <filter
+              id={filterId}
+              key={filterId}
+              x="-50%"
+              y="-50%"
+              width="200%"
+              height="200%"
+            >
+              <feDropShadow
+                dx={x}
+                dy={y}
+                stdDeviation={blur}
+                floodColor={shadowColor}
+                floodOpacity={opacity}
+              />
+            </filter>,
+          );
+
+          contentNode = renderLines({
+            fill: color,
+            filterId,
+          });
+          break;
+        }
+
+        case "lift": {
+          const { intensity } = effects.lift;
+          const filterId = "liftEffect";
+
+          defs.push(
+            <filter
+              id={filterId}
+              key={filterId}
+              x="-50%"
+              y="-50%"
+              width="200%"
+              height="200%"
+            >
+              <feDropShadow
+                dx={0}
+                dy={intensity}
+                stdDeviation={intensity * 2}
+                floodColor="#111827"
+                floodOpacity={0.35}
+              />
+            </filter>,
+          );
+
+          contentNode = renderLines({
+            fill: color,
+            filterId,
+          });
+          break;
+        }
+
+        case "splice": {
+          const { thickness, offset, direction, color: spliceColor } =
+            effects.splice;
+          const { x, y } = polarToCartesian(offset, direction);
+
+          const bottom = (
+            <text
+              key="splice-bottom"
+              x={centerX + x}
+              y={startY + y}
+              fill={spliceColor}
+              {...baseTextProps}
+            >
+              {lines.map((line, index) => (
+                <tspan
+                  key={index}
+                  x={centerX + x}
+                  dy={index === 0 ? 0 : lineHeightPx}
+                >
+                  {line}
+                </tspan>
+              ))}
+            </text>
+          );
+
+          const top = renderLines({
+            fill: color,
+            stroke: color,
+            strokeWidth: thickness,
+          });
+
+          contentNode = (
+            <>
+              {bottom}
+              {top}
+            </>
+          );
+          break;
+        }
+
+        case "neon": {
+          const { intensity } = effects.neon;
+          const filterId = "neonEffect";
+          const blurSmall = intensity * 0.6;
+          const blurMedium = intensity * 1.2;
+          const blurLarge = intensity * 2;
+
+          defs.push(
+            <filter
+              id={filterId}
+              key={filterId}
+              x="-50%"
+              y="-50%"
+              width="200%"
+              height="200%"
+            >
+              <feGaussianBlur
+                in="SourceGraphic"
+                stdDeviation={blurSmall}
+                result="blur1"
+              />
+              <feGaussianBlur
+                in="SourceGraphic"
+                stdDeviation={blurMedium}
+                result="blur2"
+              />
+              <feGaussianBlur
+                in="SourceGraphic"
+                stdDeviation={blurLarge}
+                result="blur3"
+              />
+              <feMerge>
+                <feMergeNode in="blur1" />
+                <feMergeNode in="blur2" />
+                <feMergeNode in="blur3" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>,
+          );
+
+          contentNode = renderLines({
+            fill: "#FFFFFF",
+            stroke: color,
+            strokeWidth: 1.5,
+            filterId,
+          });
+          break;
+        }
+
+        case "background": {
+          const {
+            roundness,
+            spread,
+            transparency,
+            color: backgroundColor,
+          } = effects.background;
+          const opacity = Math.max(
+            0,
+            Math.min(1, (100 - transparency) / 100),
+          );
+
+          const paddingX = spread;
+          const paddingY = spread / 2;
+          const rectWidth = SVG_WIDTH - paddingX * 2;
+          const rectHeight = totalHeight + paddingY * 2;
+          const rectX = (SVG_WIDTH - rectWidth) / 2;
+          const rectY = (SVG_HEIGHT - rectHeight) / 2;
+
+          backgroundNode = (
+            <rect
+              x={rectX}
+              y={rectY}
+              width={rectWidth}
+              height={rectHeight}
+              rx={roundness}
+              ry={roundness}
+              fill={backgroundColor}
+              fillOpacity={opacity}
+            />
+          );
+
+          contentNode = renderLines({
+            fill: color,
+          });
+          break;
+        }
+
+        case "none":
+        default: {
+          contentNode = renderLines({
+            fill: color,
+          });
+        }
+      }
+
+      return (
+        <svg
+          width="100%"
+          height={SVG_HEIGHT}
+          viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>{defs}</defs>
+          {backgroundNode}
+          {contentNode}
+        </svg>
+      );
+    };
 
     return (
       <div className={styles.previewBox} ref={ref}>
-        <span style={wrapper}>
-          <span style={previewStyle}>
-            {fontsLoaded ? text || "നമസ്കാരം" : "Loading fonts..."}
-          </span>
-        </span>
+        {generateEffectSvg()}
       </div>
     );
-  }
+  },
 );
 
 PreviewBox.displayName = "PreviewBox";
