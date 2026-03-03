@@ -33,6 +33,14 @@ describe("Akshara Studio MVP", () => {
   const mockUseFeatureSupport = jest.mocked(useFeatureSupport);
   const mockRequestOpenExternalUrl = jest.mocked(requestOpenExternalUrl);
 
+  beforeAll(() => {
+    // ensure font API exists
+    Object.defineProperty(document, 'fonts', {
+      value: { ready: Promise.resolve() },
+      writable: true,
+    });
+  });
+
   beforeEach(() => {
     jest.resetAllMocks();
     mockIsSupported.mockImplementation(
@@ -46,6 +54,9 @@ describe("Akshara Studio MVP", () => {
     const result = renderInTestProvider(<App />);
     const addBtn = result.getByRole("button", { name: "Add to Design" });
     expect(addBtn).toBeDisabled();
+
+    // dropdown should contain preview text
+    expect(result.getByRole('option', { name: /നമസ്കാരം/ })).toBeTruthy();
 
     const textarea = result.getByRole("textbox");
     fireEvent.change(textarea, { target: { value: "മലയാളം" } });

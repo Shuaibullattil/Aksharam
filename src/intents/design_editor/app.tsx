@@ -11,7 +11,7 @@ import { fonts, FontOption } from "./fonts";
  */
 export const App: React.FC = () => {
   const [text, setText] = useState("");
-  const [font, setFont] = useState<string>(fonts[0].name);
+  const [font, setFont] = useState<string>(fonts[0]?.name || "");
   const [size, setSize] = useState<number>(48);
   const [color, setColor] = useState<string>("#000000");
   const [shadowEnabled, setShadowEnabled] = useState<boolean>(false);
@@ -20,6 +20,7 @@ export const App: React.FC = () => {
   const [outlineColor, setOutlineColor] = useState<string>("#000000");
   const [outlineWidth, setOutlineWidth] = useState<number>(1);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const [fontsLoaded, setFontsLoaded] = useState<boolean>(false);
 
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -29,15 +30,13 @@ export const App: React.FC = () => {
   );
 
   useEffect(() => {
-    // preload fonts; they are also imported via css but this ensures
-    // they are available before dropdown renders
-    fonts.forEach((f: FontOption) => {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href =
-        `https://fonts.googleapis.com/css2?family=${f.urlName}&display=swap`;
-      document.head.appendChild(link);
-    });
+    // wait for fonts to load (CSS import already brings them in)
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => setFontsLoaded(true));
+    } else {
+      // fallback - assume ready
+      setFontsLoaded(true);
+    }
   }, []);
 
   const handleAdd = async () => {
@@ -47,7 +46,7 @@ export const App: React.FC = () => {
     setIsGenerating(true);
     try {
       const dataUrl = await toPng(previewRef.current, { pixelRatio: 3 });
-      await addElement({ type: "image", src: dataUrl });
+      await addElement({ type: "image", dataUrl, altText: { text: text || "Malayalam text", decorative: false } });
     } catch (err) {
       console.error(err);
       alert("Failed to generate image");
@@ -94,7 +93,7 @@ export const App: React.FC = () => {
                 value={f.name}
                 style={{ fontFamily: f.name }}
               >
-                {f.name}
+                {`നമസ്കാരം (${f.name})`}
               </option>
             ))}
           </select>
@@ -168,7 +167,9 @@ export const App: React.FC = () => {
         </div>
 
         <div className={styles.previewBox} ref={previewRef}>
-          <span style={previewStyle}>{text || 'Preview text'}</span>
+          <span style={previewStyle}>
+            {fontsLoaded ? text || 'നമസ്കാരം' : 'Loading fonts...'}
+          </span>
         </div>
 
         <button

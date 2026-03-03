@@ -1,7 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Manjari&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Baloo+Chettan+2&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Malayalam&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@300;400;600;700&family=Noto+Serif+Malayalam:wght@300;400;600;700&family=Manjari:wght@300;400;600;700&family=Baloo+Chettan+2:wght@300;400;600;700&family=Gayathri:wght@300;400;600;700&family=Anek+Malayalam:wght@300;400;600;700&family=Meera+Inimai:wght@300;400;600;700&family=Rachana:wght@300;400;600;700&family=Dyuthi:wght@300;400;600;700&family=Chilanka:wght@300;400;600;700&display=swap');
 
 /* Scroll container */
 .scrollContainer {
